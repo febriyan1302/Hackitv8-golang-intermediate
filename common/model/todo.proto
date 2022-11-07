@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package model;
+
+option go_package = "/model";
+
+message Todo {
+  string id = 1;
+  string name = 2;
+}
+
+message TodoList {
+  repeated Todo list = 1;
+}
+
+import "google/protobuf/empty.proto";
+
+service Todos {
+  rpc List(google.protobuf.Empty) returns (TodoList) {}
+  rpc Register(Todo) returns (google.protobuf.Empty) {}
+  rpc Remove(Todo) returns (google.protobuf.Empty) {}
+  rpc Edit(Todo) returns (google.protobuf.Empty) {}
+}
