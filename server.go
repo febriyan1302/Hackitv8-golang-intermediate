@@ -14,7 +14,7 @@ import (
 const SessionId = "id"
 
 func newRedisStore() *redistore.RediStore {
-	store, err := redistore.NewRediStore(10, "tcp", ":6379", "", []byte("secret-key"))
+	store, err := redistore.NewRediStore(10, "tcp", "redis:6379", "", []byte("secret-key"))
 	if err != nil {
 		panic(err)
 	}

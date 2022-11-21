@@ -20,7 +20,7 @@ func (user User) MarshalBinary() ([]byte, error) {
 }
 
 func newRedisClient() *redis.Client {
-	var host = "localhost:6379"
+	var host = "redis:6379"
 	var password = ""
 
 	client := redis.NewClient(&redis.Options{
