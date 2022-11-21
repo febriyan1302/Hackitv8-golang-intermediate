@@ -93,6 +93,12 @@ func main() {
 	})
 
 	e.GET("/login", func(c echo.Context) error {
+		session, _ := store.Get(c.Request(), SessionId)
+		_, checkSession := session.Values["firstname"].(string)
+		if checkSession {
+			return c.Redirect(http.StatusTemporaryRedirect, "/dashboard")
+		}
+
 		return c.Render(http.StatusOK, "login.html", nil)
 	})
 
@@ -107,8 +113,8 @@ func main() {
 		}
 
 		// SET SESSION
-		fmt.Println("Before set session")
 		session, _ := store.Get(c.Request(), SessionId)
+		fmt.Println("Before set session")
 		session.Values["firstname"] = user.Username
 		session.Values["lastname"] = user.LastName
 		err := session.Save(c.Request(), c.Response())
