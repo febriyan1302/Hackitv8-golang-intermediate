@@ -1,15 +1,36 @@
 package main
 
 import (
+	"flag"
+	"log"
 	"net/http"
-
-	"github.com/labstack/echo/v4"
 )
 
+var addr = flag.String("addr", ":8888", "http service address")
+
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "home.html")
+}
+
 func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	flag.Parse()
+	hub := newHub()
+	go hub.run()
+	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		serveWs(hub, w, r)
 	})
-	e.Logger.Fatal(e.Start(":1323"))
+	err := http.ListenAndServe(*addr, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 }
